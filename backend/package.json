@@ -1,0 +1,30 @@
+{
+  "name": "rag_proj1_backend",
+  "version": "1.0.0",
+  "description": "It is a backend for my first RAG 'BeMyLegalAssistant'",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon node -r dotenv/config src/index.js"
+  },
+  "keywords": [
+    "RAG",
+    "Backend",
+    "MongoDB",
+    "Multer",
+    "Pinecone",
+    "Mistral",
+    "AI"
+  ],
+  "author": "The Poonam Mehan",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.9",
+    "prettier": "^3.4.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.7"
+  }
+}
