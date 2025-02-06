@@ -1,1 +1,1 @@
-export const DB_NAME="Rag1MyLegalAssistant";
+export const DB_NAME="Rag1Proj";

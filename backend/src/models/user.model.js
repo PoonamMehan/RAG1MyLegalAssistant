@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import {Schema} from "mongoose";
-import {bcrypt} from "bcrypt";
-import {jwt} from "jasonwebtoken";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const userSchema = new Schema({
     username: {
@@ -33,12 +33,17 @@ const userSchema = new Schema({
 }
 )
 
-userSchema.pre("save", async function(next)){
-    if(!this.isModified("password")){
-        return next();
+try{
+    userSchema.pre("save", async function(next){
+        if(!this.isModified("password")){
+            return next();
+        }
+        this.password = await bcrypt.hash(this.password, 10)
+        next()
     }
-    this.password = await bcrypt.hash(this.password, 10)
-    next()
+    )
+}catch(error){
+    throw new ApiError(500, "Something went wrong while modifying the password for efficient DB save.")
 }
 
 userSchema.methods.isPasswordCorrect = async function(password){
@@ -50,8 +55,8 @@ userSchema.methods.generateAccessToken = function () {
     return jwt.sign(
         {
             _id: this._id,
-            email: this.email
-            username: this.username;
+            email: this.email,
+            username: this.username
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
@@ -73,4 +78,4 @@ userSchema.methods.generateRefreshToken = function() {
 }
 
 
-const User = mongoose.model("User", userSchema);
+export const User = mongoose.model("User", userSchema);
