@@ -3,11 +3,12 @@ import {Schema} from "mongoose"
 import {User} from "./user.model.js"
 import { aggregatePaginate } from "mongoose-aggregate-paginate-v2"
 
-const conversationSchema = new Schema({
+const chatSchema = new Schema({
     user: {
 
         type: Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        required: true
 
     },
     messages: [
@@ -15,7 +16,8 @@ const conversationSchema = new Schema({
         {
             role: {
                 type: String,
-                required: true
+                required: true,
+                enum: ["system", "assistant", "user", "tool"]
             },
             message: {
                 type: String,
@@ -27,6 +29,6 @@ const conversationSchema = new Schema({
 
 })
 
-conversationSchema.plugin(aggregatePaginate)
+// chatSchema.plugin(aggregatePaginate)
 
-export const Conversation = mongoose.model("Conversation", conversationSchema)
+export const Chat = mongoose.model("Chat", chatSchema)

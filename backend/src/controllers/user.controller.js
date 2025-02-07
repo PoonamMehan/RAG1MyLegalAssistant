@@ -3,6 +3,10 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 import { ApiError } from "../utils/apiError.js"
 import {User} from "../models/user.model.js"
 import jwt from "jsonwebtoken"
+import { initialDataSave } from "./chat.controller.js"
+import {Chat} from "../models/chat.model.js" 
+import {mongoose } from "mongoose"
+
 
 const registerUser = asyncHandler(async(req, res)=>{
     //take information from the user
@@ -41,7 +45,6 @@ const registerUser = asyncHandler(async(req, res)=>{
         password
     })
 
-    console.log("Progress has reached here")
 
     //if user not created successfully throw a new error
     const createdUser = await User.findById(user._id).select("-refreshToken -password")
@@ -49,6 +52,15 @@ const registerUser = asyncHandler(async(req, res)=>{
         console.log("Something went wrong while creating the user: ",user);
         console.log("Fetched user: ", createdUser)
         throw new ApiError(500, "Something went wrong while registering the User.")
+    }
+
+    //now that user is created, we create a new entry in the Chat model
+    initialDataSave(user._id);
+
+    const chatInitialEntry = await Chat.findOne({ user: new mongoose.Types.ObjectId(user._id) });
+    if(!chatInitialEntry){
+        console.log("Initial entry in the Chat model not made properly.")
+        throw new ApiError(500, "Something went wrong while making initial entry for the user in Chat model.")
     }
 
     return res.status(201).json(
@@ -113,6 +125,7 @@ const loginUser = asyncHandler(async(req, res)=>{
         httpOnly: true,
         secure: true
     }
+
 
     return res.status(200)
     .cookie("accessToken", accessToken, options)
