@@ -1,15 +1,16 @@
 import { Mistral } from "@mistralai/mistralai";
 
-const apiKey = process.env.MISTRAL_API_KEY;
+
+
+
+export const mistralChatCompletion = async (msgs)=>{
+    const apiKey = process.env.MISTRAL_API_KEY;
 
 const client = new Mistral({apiKey: apiKey});
-
-
-export const mistralChatCompletion = async ()=>{
     try{
         const result = await client.chat.stream({
             model: "mistral-small-latest",
-            messages: [{role: 'user', content: 'What is the best French cheese?'}],
+            messages: msgs,
         });
     
         return result; 
@@ -25,10 +26,14 @@ export const mistralChatCompletion = async ()=>{
 
 export const createEmbeddingMistral = async (msg) => {
     try{
-        msgEmbedding = await client.embeddings.create(
-            model=model,
-            inputs=[msg],
-        )
+        const apiKey = process.env.MISTRAL_API_KEY;
+
+const client = new Mistral({apiKey: apiKey});
+
+        const msgEmbedding = await client.embeddings.create({
+            model:"mistral-embed",
+            inputs: msg,
+    })
     
         return msgEmbedding;
 

@@ -1,6 +1,7 @@
 import express from "express";
 import userRouter from "./routes/user.route.js";
 import cookieParser from "cookie-parser";
+import chatRouter from "./routes/chat.route.js"
 
 
 const app = express()
@@ -12,5 +13,6 @@ app.use(cookieParser())
 
 
 app.use("/api/v1/user", userRouter)
+app.use("/api/v1/chat", chatRouter)
 
 export {app}
