@@ -6,6 +6,8 @@ function ChatInterface(){
 
     const [messages, setMessages] = useState([])
     const {register, handleSubmit, reset} = useForm()
+    const [answerStream, setAnswerStream] = useState("")
+
 
     const getMessageHistory = async()=>{
         //wrap in try catch
@@ -24,8 +26,26 @@ function ChatInterface(){
 
 
     const addMessage = (role, msg)=>{
-        setMessages((oldVal)=>{[...oldVal, {role: role, message: msg}]})
+        setMessages((oldVal)=>{return [...oldVal, {role: role, message: msg}]})
     }
+
+
+    // const dynamicallySetMessages = (initialEntry, msg)=>{
+    //     if(initialEntry){
+    //         setMessages((oldVal) => {return [...oldVal, {role: "assistant", message: msg}]})
+    //     }else{
+    //         setMessages((oldVal) => {
+    //             const newVal = [...oldVal]
+    //             newVal[newVal.length-1] = {role: "assistant", message: msg}
+    //             return newVal
+    //         })
+    //     }
+    // }
+    const dynamicallySetMessages = (msg)=>{
+            setAnswerStream(msg)
+        }
+    
+
 
 
     const getAnswer = async(data)=>{
@@ -40,16 +60,48 @@ function ChatInterface(){
             console.log("userquery in getAnswer : ", data.userQuery)
             addMessage("user", data.userQuery)
         
-            const answer = await axios("/api/v1/chat/generate-answer", {"userQuery": data.userQuery},
-                {
-                    headers: {
-                    'Content-Type': 'application/json'
-                    },
-                    withCredentials: true
-                }
-            )
+            // const answer = await axios("/api/v1/chat/generate-answer", {"userQuery": data.userQuery},
+            //     {
+            //         headers: {
+            //         'Content-Type': 'application/json'
+            //         },
+            //         withCredentials: true
+            //     }
+            // )
 
-            console.log("Answer: ", answer)
+            const answer = await fetch("/api/v1/chat/generate-answer", {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({"userQuery": data.userQuery})
+            }).then(async(res)=>{
+                const reader = res.body.getReader()
+                const decoder = new TextDecoder()
+                let result = ""
+
+                return reader.read().then(async function processText({done, value}){
+                    
+                    //create a place to add messages dynamically
+                    // dynamicallySetMessages("")
+                    if(done){
+                        addMessage("assistant", result)
+                        // dynamicallySetMessages("")
+                        console.log("done", result)
+                        return result
+                    }
+
+                    const text = decoder.decode(value || new Uint8Array(), {stream: true})
+                    result = result+" "+text
+                    
+                    dynamicallySetMessages(result)
+                    return reader.read().then(processText)
+                })
+            }).then((finalResult)=>{
+                console.log("Answer: ", finalResult)
+            })
+
+            
         }
         catch(error){
             console.log("Error occured while generating the response", error)
@@ -73,7 +125,15 @@ function ChatInterface(){
         <div>
             {/* div to show the message history*/}
             <div>
-                {}
+                {messages.map((msg, idx)=>{
+                    console.log("Ran")
+                    if(msg.role==="assistant"){
+                        return <div key={idx} className="mb-2 bg-red-300">{msg.message}</div>
+                    }else if(msg.role==="user"){
+                        return <div key={idx} className="mb-2 bg-orange-400">{msg.message}</div>
+                    }
+                })}
+                {answerStream && <div className="mb-2 bg-red-300">{answerStream}</div>}
             </div>
             <div>
                 <form onSubmit={handleSubmit(getAnswer)}>

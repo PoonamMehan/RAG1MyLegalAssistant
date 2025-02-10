@@ -39,9 +39,10 @@ function App() {
   return (
     <>
     <div> 
+    <Register/>
     {/* <Logout/>
     <Login/> */}
-    <ChatInterface/>
+    {/* <ChatInterface/> */}
     </div>
     </>
   )

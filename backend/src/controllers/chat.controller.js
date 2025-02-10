@@ -49,6 +49,7 @@ const generateAnswer = asyncHandler(async (req, res)=>{
     // save the respone in the db
     //return the res
 
+    const encoder = new TextEncoder()
     //extract user query from req.body
     const {userQuery, user} = req.body
 
@@ -89,10 +90,11 @@ const generateAnswer = asyncHandler(async (req, res)=>{
         res.setHeader("Content-Type", "text/plain");
 
     let finalGeneratedAnswer = ""
-    
+
     for await (const chunk of resultStream) {
-        const streamText = chunk.data.choices[0].delta.content;
+        let streamText = chunk.data.choices[0].delta.content;
         finalGeneratedAnswer += streamText
+        streamText = encoder.encode(streamText)
         res.write(streamText)
     }
 
@@ -110,7 +112,7 @@ const generateAnswer = asyncHandler(async (req, res)=>{
     const temp = await Chat.findOne({user: user._id})
     console.log("here", temp)
 
-    res.status(200).json(new ApiResponse(200, finalGeneratedAnswer, "Successfully answer was generated!")) 
+    // res.status(200).json(new ApiResponse(200, finalGeneratedAnswer, "Successfully answer was generated!")) 
     return res.end()
 })
 
