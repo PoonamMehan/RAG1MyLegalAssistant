@@ -8,12 +8,12 @@ export const mistralChatCompletion = async (msgs)=>{
 
 const client = new Mistral({apiKey: apiKey});
     try{
-        const result = await client.chat.stream({
+        const resultStream = await client.chat.stream({
             model: "mistral-small-latest",
             messages: msgs,
         });
     
-        return result; 
+        return resultStream; 
     }catch(err){
         console.log("Something went wrong while generating response from Mistral AI.")
         throw err;

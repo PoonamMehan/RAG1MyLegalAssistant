@@ -21,6 +21,7 @@ const initialDataSave = async (userId)=>{
             throw new ApiError(500, "Something went wrong while setting up chat for this user.")
         }
 
+
         chatEnabled.messages.push({
             role: "assistant",
             message: "Hi! I am your Personal Legal Assistant to save you from getting behind the bars."
@@ -67,9 +68,7 @@ const generateAnswer = asyncHandler(async (req, res)=>{
     ))
    
     //fetch all the messages from Chat model and add the user query and result from pinecone into the messages
-    let userId = String(user._id).replace("new ObjectId(", "").replace(")", "")
     const allMessagesDB = await Chat.findOne({user: user._id})
-
 
 
     let allMessages = allMessagesDB.messages
@@ -86,10 +85,15 @@ const generateAnswer = asyncHandler(async (req, res)=>{
     const resultStream = await mistralChatCompletion([...allMessages, {role : "user",
         content: resultString}])
 
+        res.setHeader("Transfer-Encoding", "chunked");
+        res.setHeader("Content-Type", "text/plain");
+
     let finalGeneratedAnswer = ""
+    
     for await (const chunk of resultStream) {
         const streamText = chunk.data.choices[0].delta.content;
         finalGeneratedAnswer += streamText
+        res.write(streamText)
     }
 
 
@@ -106,9 +110,20 @@ const generateAnswer = asyncHandler(async (req, res)=>{
     const temp = await Chat.findOne({user: user._id})
     console.log("here", temp)
 
+    res.status(200).json(new ApiResponse(200, finalGeneratedAnswer, "Successfully answer was generated!")) 
+    return res.end()
+})
 
-    return res.status(200).json(new ApiResponse(200, finalGeneratedAnswer, "Successfully answer was generated!")) 
+const getMsgHistory = asyncHandler(async(req, res)=>{
+    const user = req.body.user
+    const msgHistory = await Chat.findOne({user: user._id})
+    
+    if(!msgHistory){
+        throw new ApiError(500, `Something went wrong while fetching the messages from the DB: ${msgHistory}`)
+    }
+
+    return res.status(200).json( new ApiResponse(200, {messages: msgHistory.messages}, "Messages fetched successfully"))
 })
 
 
-export {initialDataSave, generateAnswer}
+export {initialDataSave, generateAnswer, getMsgHistory}

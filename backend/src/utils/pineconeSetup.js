@@ -56,6 +56,6 @@ export const queryPinecone = async (embeddedUserQuery)=>{
         includeMetadata: true,
         vector: embeddedUserQuery,
     })
-
+    
     return results;
 }
