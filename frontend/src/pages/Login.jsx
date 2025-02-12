@@ -1,4 +1,4 @@
-import { Login as LoginComponent} from "../components/login.jsx"
+import { Login as LoginComponent} from "../components/Login.jsx"
 
 function Login(){
     return(
