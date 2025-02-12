@@ -1,4 +1,4 @@
-import { Register as RegisterComponent} from "../components/Register"
+import { Register as RegisterComponent} from "../components/Register.jsx"
 
 function Register(){
     return(
