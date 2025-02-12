@@ -31,10 +31,10 @@ const registerUser = asyncHandler(async(req, res)=>{
 
     if(existedUser){
         if(existedUser.username === username.trim().toLowerCase()){
-            throw new ApiError(400, "User with this Username already exists!")
+            throw new ApiError(409, "User with this Username already exists!")
         }
-        if(existedUser.email === email.trim()){
-            throw new ApiError(400, "User with this email already exists!")
+        if(existedUser.email === email.trim().toLowerCase()){
+            throw new ApiError(409, "User with this Email already exists!")
         }
     }
 
@@ -78,8 +78,6 @@ const generateAccessAndRefereshTokens = async(userId) =>{
         await user.save({validateBeforeSave: false})
 
         return {accessToken, refreshToken}
-
-
     } catch (error) {
         throw new ApiError(500, "Something went wrong while generating referesh and access token.")
     }
@@ -108,7 +106,6 @@ const refreshAccessTokenOnly = asyncHandler(async(req, res)=>{
         return res.status(200).cookie("accessToken", accessToken, options).json(
             new ApiResponse(200, {email: user.email, username: user.username, _id: user._id}, "NewAccessTokenGenerated")     
         )
-
 } )
 
 const loginUser = asyncHandler(async(req, res)=>{
@@ -167,7 +164,7 @@ const logoutUser = asyncHandler(async(req, res)=>{
     // remove cookies from the response
 
     const user = req.user
-    const updatedUser = await User.findByIdAndUpdate(user?.id, 
+    const updatedUser = await User.findByIdAndUpdate(user?._id, 
         {
             $set: {
                 refreshToken: undefined
@@ -179,9 +176,9 @@ const logoutUser = asyncHandler(async(req, res)=>{
     )
 
     
-    if(!updatedUser){
-        throw new ApiError(500, "Something went wrong while logging out user.")
-    }
+    // if(!updatedUser){
+    //     throw new ApiError(500, "Something went wrong while logging out user: ", updatedUser)
+    // }
     
     const options = {
         httpOnly: true,
