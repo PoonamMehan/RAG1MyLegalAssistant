@@ -118,7 +118,7 @@ const loginUser = asyncHandler(async(req, res)=>{
 
     //take login credentials from user
     const {email, username, password} = req.body;
-    console.log("Request came: ", username, email, password)
+    
     //check if required fields are available
     if(!(username?.trim() || email?.trim())){
         throw new ApiError(400, "Username or email, atleast one is required!")
