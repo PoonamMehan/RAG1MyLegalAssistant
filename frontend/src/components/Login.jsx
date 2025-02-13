@@ -41,7 +41,7 @@ function Login (){
             if(!loggedInUser){
                 console.log("user not logged In properly", loggedInUser)
             }
-            // console.log("Returned user data after registration: ", registerdUser)
+            console.log("Returned user data after login: ", loggedInUser)
 
             
             if(loggedInUser){
@@ -50,7 +50,7 @@ function Login (){
                     username: loggedInUser.data.data.user.username,
                     _id: loggedInUser.data.data.user._id
                 }
-
+                console.log("userData", userData)
                 dispatch(storeLogin(userData))
                 console.log("Logged the user in!")
                 reset()
