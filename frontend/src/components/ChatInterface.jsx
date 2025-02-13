@@ -28,7 +28,7 @@ function ChatInterface(){
     const getMessageHistory = async()=>{
         //wrap in try catch
         try{
-            const result = await axios.post("/api/v1/chat/get-message-history", {}, {
+            const result = await axios.post("http://localhost:8000/api/v1/chat/get-message-history", {}, {
             withCredentials: true  
         })
             return result.data;
@@ -39,7 +39,7 @@ function ChatInterface(){
             // //if expired then get a new one
             if(error.status >= 400 && error.status < 500){
                 try{
-                    await axios.post("/api/v1/user/refresh-access", {}, {
+                    await axios.post("http://localhost:8000/api/v1/user/refresh-access", {}, {
                     withCredentials: true
                 })
                 }catch(err){
@@ -95,7 +95,7 @@ function ChatInterface(){
         try{
             reset()
             addMessage("user", data.userQuery)
-            const answer = await fetch("/api/v1/chat/generate-answer", {
+            const answer = await fetch("http://localhost:8000/api/v1/chat/generate-answer", {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -109,7 +109,7 @@ function ChatInterface(){
                 if(res.status >= 400 && res.status < 500){
                     try{
                         console.log("error status", res.status)
-                        const newAccessTokenRes = await axios.post("/api/v1/user/refresh-access", {}, {
+                        const newAccessTokenRes = await axios.post("http://localhost:8000/api/v1/user/refresh-access", {}, {
                         withCredentials: true
                     })
                     console.log("response:",newAccessTokenRes)

@@ -22,7 +22,7 @@ function App() {
   const KeepUserLogInUponRefresh = async()=>{
     try{
 
-      let userData = await axios.post("/api/v1/user/refresh-access-only",{}, {
+      let userData = await axios.post("http://localhost:8000/api/v1/user/refresh-access-only",{}, {
         withCredentials: true
       })
 

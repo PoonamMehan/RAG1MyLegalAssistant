@@ -11,7 +11,7 @@ function Logout({className}){
 
     const logout = async()=>{
         try{
-            const loggedOut = await axios.post("/api/v1/user/logout", {}, {
+            const loggedOut = await axios.post("http://localhost:8000/api/v1/user/logout", {}, {
                 withCredentials: true
             })
 
@@ -23,7 +23,7 @@ function Logout({className}){
             // //if expired then get a new one
             if(error.status >= 400 && error.status < 500){
                 try{
-                    await axios.post("/api/v1/user/refresh-access", {}, {
+                    await axios.post("http://localhost:8000/api/v1/user/refresh-access", {}, {
                     withCredentials: true
                 })
                 }catch(err){

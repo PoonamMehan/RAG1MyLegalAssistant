@@ -32,7 +32,7 @@ function Register(){
         try{
             //send data to backend for registration
             //if regstration is successfull, login the user also (or we can prompt the user to login)
-            const registerdUser = await axios.post("/api/v1/user/register", {
+            const registerdUser = await axios.post("http://localhost:8000/api/v1/user/register", {
                 username: data.username,
                 email: data.email,
                 password: data.password
@@ -51,7 +51,7 @@ function Register(){
 
             
             if(registerdUser){
-                const loggedInUser = await axios.post("api/v1/user/login", {
+                const loggedInUser = await axios.post("http://localhost:8000/api/v1/user/login", {
                     username: data.username,
                     password: data.password
                 },

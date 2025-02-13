@@ -26,7 +26,7 @@ function Login (){
         try{
             console.log("data: ", data)
             
-            const loggedInUser = await axios.post("/api/v1/user/login", {
+            const loggedInUser = await axios.post("http://localhost:8000/api/v1/user/login", {
                 username: data.username,
                  email: data.email,
                 password: data.password
