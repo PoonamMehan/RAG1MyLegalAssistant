@@ -1,5 +1,5 @@
 import {Chat} from "../models/chat.model.js"
-import { ApiError } from "../utils/apiError.js"
+import { ApiError } from "../utils/ApiError.js"
 import asyncHandler from "../utils/asyncHandler.js"
 import {createEmbeddingMistral} from "../utils/mistral.js"
 import { queryPinecone } from "../utils/pineconeSetup.js"
