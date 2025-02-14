@@ -38,7 +38,7 @@ const initialDataSave = async (userId)=>{
     }
 }
 
-// console.log()
+
 const generateAnswer = asyncHandler(async (req, res)=>{
     //extract user query from req.body
     //generate embedding using this query
