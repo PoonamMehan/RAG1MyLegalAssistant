@@ -51,11 +51,7 @@ function Register(){
 
             
             if(registerdUser){
-<<<<<<< HEAD:frontend/src/components/Register.jsx
-                const loggedInUser = await axios.post("api/v1/user/login", {
-=======
                 const loggedInUser = await axios.post("/api/v1/user/login", {
->>>>>>> 6d61526 (Final version 1 to deploy the mern web app):backend/client/src/components/Register.jsx
                     username: data.username,
                     password: data.password
                 },
