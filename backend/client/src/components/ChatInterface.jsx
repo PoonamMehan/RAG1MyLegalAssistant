@@ -39,7 +39,7 @@ function ChatInterface(){
             // //if expired then get a new one
             if(error.status >= 400 && error.status < 500){
                 try{
-                    await axios.post("/api/v1/user/refresh-access", {}, {
+                    await axios.post("/api/v1/user/refresh-access-only", {}, {
                     withCredentials: true
                 })
                 }catch(err){
