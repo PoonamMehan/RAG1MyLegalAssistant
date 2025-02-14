@@ -28,7 +28,7 @@ function ChatInterface(){
     const getMessageHistory = async()=>{
         //wrap in try catch
         try{
-            const result = await axios.post("http://localhost:8000/api/v1/chat/get-message-history", {}, {
+            const result = await axios.post("/api/v1/chat/get-message-history", {}, {
             withCredentials: true  
         })
             return result.data;
@@ -39,7 +39,7 @@ function ChatInterface(){
             // //if expired then get a new one
             if(error.status >= 400 && error.status < 500){
                 try{
-                    await axios.post("http://localhost:8000/api/v1/user/refresh-access", {}, {
+                    await axios.post("/api/v1/user/refresh-access", {}, {
                     withCredentials: true
                 })
                 }catch(err){
@@ -95,8 +95,9 @@ function ChatInterface(){
         try{
             reset()
             addMessage("user", data.userQuery)
-            const answer = await fetch("http://localhost:8000/api/v1/chat/generate-answer", {
+            const answer = await fetch("/api/v1/chat/generate-answer", {
                 method: 'POST',
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -109,7 +110,7 @@ function ChatInterface(){
                 if(res.status >= 400 && res.status < 500){
                     try{
                         console.log("error status", res.status)
-                        const newAccessTokenRes = await axios.post("http://localhost:8000/api/v1/user/refresh-access", {}, {
+                        const newAccessTokenRes = await axios.post("/api/v1/user/refresh-access", {}, {
                         withCredentials: true
                     })
                     console.log("response:",newAccessTokenRes)
@@ -131,11 +132,11 @@ function ChatInterface(){
                 //now handling the response after ensuring the response is right
 
                 
-            console.log("userquery in getAnswer : ", data.userQuery)
+            // console.log("userquery in getAnswer : ", data.userQuery)
             // addMessage("user", data.userQuery)
                     
 
-                console.log("res status", res.status)
+                // console.log("res status", res.status)
                 const reader = res.body.getReader()
                 const decoder = new TextDecoder()
                 let result = ""
@@ -171,12 +172,11 @@ function ChatInterface(){
             const data = await getMessageHistory()
             setMessages(data.data.messages)
         })()
-        
     }, [])
 
-    useEffect(()=>{
-        console.log("use effect messages", messages)
-    }, [messages])
+    // useEffect(()=>{
+    //     console.log("use effect messages", messages)
+    // }, [messages])
 
     
 
@@ -187,7 +187,6 @@ function ChatInterface(){
         <div className="max-w-3xl mx-auto w-full">
             <div className="flex flex-col space-y-4">
                 {messages.map((msg, idx) => {
-                    console.log("Ran");
                     if (msg.role === "assistant") {
                         return (
                             <div

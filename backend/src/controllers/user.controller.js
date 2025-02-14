@@ -18,7 +18,7 @@ const registerUser = asyncHandler(async(req, res)=>{
     
     //input usercredentials
     const {username, email, password} = req.body;
-    console.log(username, email,password)
+    // console.log(username, email,password)
     //check if all required credentials are present and add validation check
     if([username, email, password].some((field)=>!field || field.trim()=="")){
         throw new ApiError(400, "All fields are required!")
@@ -98,7 +98,8 @@ const refreshAccessTokenOnly = asyncHandler(async(req, res)=>{
         
         const options = {
             httpOnly: true,
-            secure: true
+            secure: true,
+            sameSite: "none"
         }
 
         const accessToken = await user.generateAccessToken()
@@ -118,7 +119,7 @@ const loginUser = asyncHandler(async(req, res)=>{
 
     //take login credentials from user
     const {email, username, password} = req.body;
-    
+
     //check if required fields are available
     if(!(username?.trim() || email?.trim())){
         throw new ApiError(400, "Username or email, atleast one is required!")
@@ -146,7 +147,8 @@ const loginUser = asyncHandler(async(req, res)=>{
 
     const options = {
         httpOnly: true,
-        secure: true
+        secure: true,
+        sameSite: "none",
     }
 
  

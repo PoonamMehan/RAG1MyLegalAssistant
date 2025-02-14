@@ -21,7 +21,7 @@ const initialDataSave = async (userId)=>{
             throw new ApiError(500, "Something went wrong while setting up chat for this user.")
         }
 
-
+        
         chatEnabled.messages.push({
             role: "assistant",
             message: "Hi! I am your Personal Legal Assistant to save you from getting behind the bars."

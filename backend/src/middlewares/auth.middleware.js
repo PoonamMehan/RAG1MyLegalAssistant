@@ -11,7 +11,7 @@ export const verifyJWT = asyncHandler(async (req, _, next)=>{
     //serach this user up in our DB
     //if present in DB send next(user[-password, -refresh token])
     //if not then send error of expired access token
-
+    // console.log("Token", req.cookies)
     try{
         //extract token from user's request
         const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
