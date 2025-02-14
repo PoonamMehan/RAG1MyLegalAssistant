@@ -94,7 +94,7 @@ function ChatInterface(){
         //when response will be fetched show it on the page dynamically
         try{
             reset()
-            addMessage("user", data.userQuery)
+            
             const answer = await fetch("/api/v1/chat/generate-answer", {
                 method: 'POST',
                 credentials: "include",
@@ -110,6 +110,7 @@ function ChatInterface(){
                 if(res.status >= 400 && res.status < 500){
                     try{
                         console.log("error status", res.status)
+                        console.log("error ", res)
                         const newAccessTokenRes = await axios.post("/api/v1/user/refresh-access", {}, {
                         withCredentials: true
                     })
@@ -133,9 +134,8 @@ function ChatInterface(){
 
                 
             // console.log("userquery in getAnswer : ", data.userQuery)
-            // addMessage("user", data.userQuery)
+            addMessage("user", data.userQuery)
                     
-
                 // console.log("res status", res.status)
                 const reader = res.body.getReader()
                 const decoder = new TextDecoder()
