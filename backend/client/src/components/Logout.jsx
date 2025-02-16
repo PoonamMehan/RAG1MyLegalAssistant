@@ -17,6 +17,7 @@ function Logout({className}){
 
             if(loggedOut){
                 dispatch(storeLogout())
+                navigate("/")
             }
         }catch(error){
             //access token expiry
