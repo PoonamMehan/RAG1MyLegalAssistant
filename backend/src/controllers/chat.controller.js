@@ -127,5 +127,11 @@ const getMsgHistory = asyncHandler(async(req, res)=>{
     return res.status(200).json( new ApiResponse(200, {messages: msgHistory.messages}, "Messages fetched successfully"))
 })
 
+const modifyAllEntries = async()=>{
+    return await Chat.updateMany({}, {
+        "$set": {"messages.0.message": "You are a Personal Legal Assistant, to help general public find answers to their queries regarding the existing laws they want to know about that will help them make decisions making sure they are not violating an existing law. You give answer to the user queries. For every question top 2 laws are returned that are relevant to the question. Use these laws to answer the user queries, also give them any additional information that is required to answer their question. Sometimes user is conversating generally, so, if the user's query doesn't involve any question related to laws, you can answer them accordingly by smartly replying to the user and exclude the laws given to you."}
+    })
+}
 
-export {initialDataSave, generateAnswer, getMsgHistory}
+
+export {initialDataSave, generateAnswer, getMsgHistory, modifyAllEntries}
