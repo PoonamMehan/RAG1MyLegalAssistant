@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux'
 import { logout as storeLogout } from '../store/authSlice'
 import { useNavigate } from 'react-router-dom'
 import { useRef } from 'react'
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 function ChatInterface(){
 
@@ -14,6 +15,8 @@ function ChatInterface(){
     const [answerStream, setAnswerStream] = useState("")
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const [loadingBeforeAnswerComes, setLoadingBeforeAnswerComes] = useState(false)
+
 
 
     //to keep the latest answer in view
@@ -23,7 +26,7 @@ function ChatInterface(){
     };
     useEffect(() => {
         scrollToBottom();
-    }, [messages, answerStream]);
+    }, [messages, answerStream, loadingBeforeAnswerComes]);
 
     const getMessageHistory = async()=>{
         //wrap in try catch
@@ -64,6 +67,11 @@ function ChatInterface(){
     const addMessage = (role, msg)=>{
         setMessages((oldVal)=>{return [...oldVal, {role: role, message: msg}]})
     }
+    const deleteUserQueryFromMsg = ()=>{
+        const msgsLen = messages.length
+        setMessages(messages.filter((msg, idx)=>{if(idx != msgsLen){
+            return msg}}))
+    }
 
     const dynamicallySetMessages = (msg)=>{
             setAnswerStream(msg)
@@ -94,7 +102,10 @@ function ChatInterface(){
         //when response will be fetched show it on the page dynamically
         try{
             reset()
-            
+            addMessage("user", data.userQuery)
+            setLoadingBeforeAnswerComes(true)
+
+
             const answer = await fetch("/api/v1/chat/generate-answer", {
                 method: 'POST',
                 credentials: "include",
@@ -125,6 +136,7 @@ function ChatInterface(){
                             navigate("/login")
                         }   
                     }
+                    deleteUserQueryFromMsg()
                     getAnswer(data);
                 }else if(res.status >= 500){
                     console.log("Error occured while generating the response", res)
@@ -132,9 +144,9 @@ function ChatInterface(){
                 }else{
                 //now handling the response after ensuring the response is right
 
-                
+            setLoadingBeforeAnswerComes(false)  
             // console.log("userquery in getAnswer : ", data.userQuery)
-            addMessage("user", data.userQuery)
+            
                     
                 // console.log("res status", res.status)
                 const reader = res.body.getReader()
@@ -207,11 +219,23 @@ function ChatInterface(){
                         );
                     }
                 })}
+                
+                {loadingBeforeAnswerComes &&
+                    <div className="ml-auto w-16">
+                        <DotLottieReact
+                            src="https://lottie.host/ce6fcd0d-03dc-41c1-b5c5-85ada0dd0caf/DgKs0xVGgh.lottie"
+                            loop
+                            autoplay
+                        />
+                    </div>
+                }
+            
                 {answerStream && (
                     <div className="max-w-[80%] ml-auto bg-blue-100 p-4 rounded-lg shadow-sm">
                         {parse(parseResponse(answerStream))}
                     </div>
                 )}
+                {}
               <div ref={messagesEndRef}></div>
   
             </div>
