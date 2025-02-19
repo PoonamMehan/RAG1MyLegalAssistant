@@ -33,6 +33,7 @@ function App() {
     }
 
       dispatch(storeLogin(userData))
+      navigate("/chat")
     }catch(error){
       //if the refresh token is expired
       if(error.status >= 400 && error.status < 500 ){
